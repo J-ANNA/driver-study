@@ -1,0 +1,84 @@
+构造和运行模块  快速参考
+
+insmod
+modprobe
+rmmod
+	用来装载模块到正运行的内核和移除模块的用户空间工具
+	
+#include <linux/init.h>
+module_init(init_function);
+module_exit(cleanup_function);
+	用于指定模块的初始化和清除函数的宏
+	
+__init
+__initdata
+__exit
+__exitdata
+	仅用于模块的初始化或清除阶段的函数和数据标记。标记为初始化的项目会在初始化结束后丢弃；而退出项目在内核未被配置为可卸载模块的情况下被丢弃。内核通过将相应的目标对象放置在可执行文件的特殊ELF段中而让这些标记起作用。
+
+#include <linux/sched.h>
+	最重要的头文件之一。该文件包含驱动程序使用的大部分内核API的定义，包块睡眠函数以及各种变量声明。
+	
+strcut task_struct *current;
+	当前进程
+current->pid
+current->comm
+	当前进程ID和命令名
+
+obj-m 
+	由内核构造系统使用的makefile符号，用来确定在当前目录中应构造哪些模块
+
+/sys/module 
+/proc/modules 
+	/sys/module 是 sysfs 目录层次结构中包含当前已装载模块信息的目录。/proc/modules 是早期用法，只在单个文件中包含这些信息，其中包含了模块名称、每个模块使用的内存总量以及使用计数等。每一行之后还追加有额外的字符串，用来指定模块的当前活动标志。
+	
+vermagic.o 
+	内核源代码目录中一个目标文件，它描述了模块的构造环境。
+
+#include <linux/module.h>	
+	必需的头文件，它必须包含在模块的源代码中
+
+#include <linux/version.h>
+	包含所构造内核版本信息的头文件
+
+LINUX_VERSION_CODE
+	整数宏，在处理版本依赖的预处理条件语句中非常有用
+
+EXPORT_SYMBOL (symbol)
+EXPORT_SYMBOL_GPL (symbol)
+	用来导出单个符号到内核的宏。第二个宏将导出符号的使用限于GPL许可证下的模块
+
+MODULE_AUTHOR(author);
+MODULE_DESCRIPTION(description);
+MODULE_VERSION(version_string);
+MODULE_DEVICE_TABLE(table_info);
+MODULE_ALIAS(alternate_name);
+	在目标文件中添加关于模块的文档信息
+
+module_init(init_function);
+module_exit(exit_function);
+	用来声明模块初始化和清除函数的宏
+
+#include <linux/moduleparam.h>
+module_param(variable, type, perm);
+	用来创建模块参数的宏，用户可在装载模块时(或者对內建代码引导时)调整这些参数的值。其中的类型可以是bool/charp/int/invbool/long/short/ushort/uint/ulong/intarry
+	
+#include <linux/kernel.h>
+int printk(const char *fmt, ....);
+	函数printf的内核代码
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
